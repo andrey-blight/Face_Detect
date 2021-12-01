@@ -1,4 +1,5 @@
 import cv2 as cv
+import face_recognition
 
 BLACK_WIGHT = False  # Фильтр чб
 BLUR = False  # Фильтр блура
@@ -7,6 +8,7 @@ cap = cv.VideoCapture(0)  # Получение видеоряда с перво�
 cascade = cv.CascadeClassifier("lbpcascade_frontalface.xml")  # Загрузка каскада
 while True:
     ok, img = cap.read()  # Получение картинки
+    # rects = face_recognition.face_locations(img)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)  # Создание картинки серого цвета
     sf = min(640. / img.shape[1], 480. / img.shape[0])  # Получение размеров для сжатия
     gray = cv.resize(gray, (0, 0), None, sf, sf)  # Сжатие серой картинки
