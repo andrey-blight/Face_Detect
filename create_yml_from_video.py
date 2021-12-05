@@ -11,7 +11,7 @@ def create_images_for_person(person, video_dir):
     # Поддержтваемые форматы видео:
     # 3gp, avi, f4v, hevc, mkv, mov, mp4, mpg, ts, webm, wmv
 
-    SAVING_FRAMES_PER_SECOND = 17  # Интервал выборки кадров 17 если видео минута
+    SAVING_FRAMES_PER_SECOND = 5  # Интервал выборки кадров 17 если видео минута
     SAVING_PATH = f'images/{person}'  # Папка сохранения кадров
     # Если тдериктории не существует создадим ее
     if not os.path.exists(SAVING_PATH):
@@ -27,7 +27,8 @@ def create_images_for_person(person, video_dir):
         frames_timecodes.append(i)
     cur_frame = 0  # Счетчик для всех кадров
     img_count = 1  # Счетчик для кадров, которые впоследствие будут отобраны
-    while img_count <= 200:  # Запускаем цикл выборки кадров
+    while img_count <= 400:  # Запускаем цикл выборки кадров
+        print(img_count)
         is_read, frame = cap.read()  # Считываем кадр
         if not is_read:  # Если кадров больше не осталось, выходим из цикла
             break
@@ -45,9 +46,10 @@ def create_images_for_person(person, video_dir):
 
 
 def forming_data_source():
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    image_dir = os.path.join(BASE_DIR, "images/andrey")
-
+    if os.path.exists(r"data/recognition.yml"):
+        os.remove(r"data/recognition.yml")
+    if os.path.exists(r"data/labels.pickle"):
+        os.remove(r"data/labels.pickle")
     face_cascade = cv2.CascadeClassifier('data/head_cascade.xml')
     recognizer = cv2.face.LBPHFaceRecognizer_create()
 
@@ -55,20 +57,21 @@ def forming_data_source():
     label_ids = {}
     y_labels = []
     x_train = []
-
+    image_dir = "images/"
     for root, dirs, files in os.walk(image_dir):
         for file in files:
             if file.endswith("png") or file.endswith("jpg"):
                 path = os.path.join(root, file)
                 label = os.path.basename(root).replace(" ", "-").lower()
-                if not label in label_ids:
+                print(label)
+                if label not in label_ids:
                     label_ids[label] = current_id
                     current_id += 1
                 id_ = label_ids[label]
                 size = (550, 550)
                 final_image = Image.open(path).resize(size, Image.ANTIALIAS)
                 image_array = np.array(final_image, "uint8")
-                faces = face_cascade.detectMultiScale(image_array, scaleFactor=1.1, minNeighbors=8)
+                faces = face_cascade.detectMultiScale(image_array, scaleFactor=1.1, minNeighbors=6, minSize=(40, 40))
 
                 for (x, y, w, h) in faces:
                     roi = image_array[y:y + h, x:x + w]
@@ -86,8 +89,12 @@ def create_yml(people):
     for name, video_dir in people:
         if not os.path.exists(f"images/{name}"):
             create_images_for_person(name, video_dir)
+    print("Learning")
     forming_data_source()
 
 
 if __name__ == '__main__':
-    create_yml([("Andrey", r"D:\My_Downloads\20211202_192435.mp4")])
+    create_yml([("Andrey_Kizhinov", r"D:\Videos\20211204_153328.mp4"),
+                ("Alexander_Gorobchenko", r"D:\Videos\20211204_153217.mp4"),
+                ("Natasha_Trofimova", r"D:\Programing\Python\face_detect2.0\Images\natasha\IMG_0368.mov"),
+                ("Kirill_Sermyagin", r"D:\Videos\20211204_155029.mp4")])

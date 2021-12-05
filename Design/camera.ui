@@ -10,8 +10,20 @@
     <height>740</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>955</width>
+    <height>740</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>955</width>
+    <height>740</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Face id</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
