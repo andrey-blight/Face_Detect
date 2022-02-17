@@ -12,8 +12,7 @@ def create_images_for_person(person, video_dir):
     # 3gp, avi, f4v, hevc, mkv, mov, mp4, mpg, ts, webm, wmv
 
     SAVING_FRAMES_PER_SECOND = 5  # Интервал выборки кадров 17 если видео минута
-    SAVING_PATH = f'images/{person}'  # Папка сохранения кадров
-    # Если тдериктории не существует создадим ее
+    SAVING_PATH = f'images/{person}'
     if not os.path.exists(SAVING_PATH):
         os.mkdir(SAVING_PATH)
     cap = cv2.VideoCapture(video_dir)  # Открываем видео на обработку
